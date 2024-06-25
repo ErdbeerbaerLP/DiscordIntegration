@@ -82,7 +82,7 @@ public class ArchitecturyMessageUtils extends MessageUtils {
                                         if (e != null)
                                             if (((ShowInTooltipAccessor) e).discordIntegration$showsInTooltip())
                                                 for (Object2IntMap.Entry<Holder<Enchantment>> ench : e.entrySet()) {
-                                                    tooltip.append(ChatFormatting.stripFormatting(ench.getKey().value().getFullname(e.getLevel(ench.getKey().value())).getString())).append("\n");
+                                                    tooltip.append(ChatFormatting.stripFormatting(ench.getKey().value().getFullname(ench.getKey(),e.getLevel(ench.getKey())).getString())).append("\n");
                                                 }
                                     }
                                     //Add Lores

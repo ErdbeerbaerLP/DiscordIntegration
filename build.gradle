@@ -22,7 +22,7 @@ subprojects {
     apply plugin: 'com.github.johnrengelman.shadow'
     base {
         // Set up a suffixed format for the mod jar names, e.g. `example-fabric`.
-        archivesName = "$rootProject.archives_name-$project.name"
+        archivesName = "$rootProject.archives_name-$project.name-MC$rootProject.minecraft_version"
     }
     repositories {
         maven { url "https://repo.erdbeerbaerlp.de/repository/maven-public/" }
