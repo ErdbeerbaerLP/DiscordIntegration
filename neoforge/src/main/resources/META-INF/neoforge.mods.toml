@@ -1,0 +1,38 @@
+modLoader = "javafml" #mandatory
+# A version range to match for said mod loader - for regular FML @Mod it will be the forge version
+loaderVersion = "[2,)" #mandatory
+license = "MIT License"
+# A URL to refer people to when problems occur with this mod
+issueTrackerURL = "https://github.com/ErdbeerbaerLP/Discord-Chat-Integration/issues" #optional
+# A list of mods - how many allowed here is determined by the individual mod loader
+[[mods]] #mandatory
+# The modid of the mod
+modId = "dcintegration" #mandatory
+# The version number of the mod - there's a few well known ${} variables useable here or just hardcode it
+version = "${version}" #mandatory
+# A display name for the mod
+displayName = "Discord Integration" #mandatory
+# A URL for the "homepage" for this mod, displayed in the mod UI
+displayURL = "https://curseforge.com/projects/dcintegration" #optional
+# A text field displayed in the mod UI
+authors = "ErdbeerbaerLP" #optional
+# The description text for the mod (multi line!) (#mandatory)
+description = '''
+This mod links your server chat with a channel on your discord server.
+'''
+displayTest="IGNORE_SERVER_VERSION"
+[[dependencies.dcintegration]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.20.6,]"
+ordering = "NONE"
+side = "SERVER"
+[[dependencies.dcintegration]]
+modId = "neoforge"
+mandatory = true
+versionRange = "[20.6,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[mixins]]
+config = "dcintegration.mixins.json"

@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "package": "de.erdbeerbaerlp.dcintegration.architectury.fabric.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "minVersion": "0.8",
+  "server": [
+    "StyledChatMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
