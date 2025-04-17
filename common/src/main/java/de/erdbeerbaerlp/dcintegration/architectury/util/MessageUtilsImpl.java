@@ -6,7 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import de.erdbeerbaerlp.dcintegration.architectury.util.accessors.ShowInTooltipAccessor;
+import de.erdbeerbaerlp.dcintegration.architectury.util.TooltipUtils;
 import de.erdbeerbaerlp.dcintegration.common.DiscordIntegration;
 import de.erdbeerbaerlp.dcintegration.common.storage.Configuration;
 import de.erdbeerbaerlp.dcintegration.common.util.MessageUtils;
@@ -23,7 +23,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemLore;
-import net.minecraft.world.item.component.Unbreakable;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.Level;
@@ -78,7 +77,7 @@ public class MessageUtilsImpl extends MessageUtils {
                                     if (itemTag.has(DataComponents.ENCHANTMENTS)) {
                                         final ItemEnchantments e = itemTag.get(DataComponents.ENCHANTMENTS);
                                         if (e != null)
-                                            if (((ShowInTooltipAccessor) e).discordIntegration$showsInTooltip())
+                                            if (TooltipUtils.showsInTooltip(is))
                                                 for (Object2IntMap.Entry<Holder<Enchantment>> ench : e.entrySet()) {
                                                     tooltip.append(ChatFormatting.stripFormatting(ench.getKey().value().getFullname(ench.getKey(),e.getLevel(ench.getKey())).getString())).append("\n");
                                                 }
@@ -91,12 +90,9 @@ public class MessageUtilsImpl extends MessageUtils {
                                                 tooltip.append("_").append(line.getString()).append("_\n");
                                             }
                                     }
-                                    //Add 'Unbreakable' Tag
-                                    if (itemTag.has(DataComponents.UNBREAKABLE)) {
-                                        final Unbreakable unb = itemTag.get(DataComponents.UNBREAKABLE);
-                                        if (unb != null)
-                                            if (unb.showInTooltip())
-                                                tooltip.append("Unbreakable\n");
+                                    // Optional: Unbreakable check fallback (not perfect)
+                                    if (!is.isDamageableItem()) {
+                                        tooltip.append("Unbreakable\n");
                                     }
                                     b.setDescription(tooltip.toString());
                                     return b.build();

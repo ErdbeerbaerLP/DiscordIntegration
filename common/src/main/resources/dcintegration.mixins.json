@@ -10,8 +10,7 @@
     "PlayerManagerMixin",
     "ChatMixin",
     "CommandManagerMixin",
-    "MixinMinecraftServer",
-    "ItemEnchantmentsComponentMixin"
+    "MixinMinecraftServer"
   ],
   "injectors": {
     "defaultRequire": 1
