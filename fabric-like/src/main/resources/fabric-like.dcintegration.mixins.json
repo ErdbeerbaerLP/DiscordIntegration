@@ -3,7 +3,7 @@
   "package": "de.erdbeerbaerlp.dcintegration.architectury.fabriclike.mixin",
   "compatibilityLevel": "JAVA_21",
   "plugin": "de.erdbeerbaerlp.dcintegration.architectury.fabriclike.mixin.StyledChatCheckerPlugin",
-  "refmap": "dcintegration-fabric-MC1.21.5-fabric-refmap.json",
+  "refmap": "dcintegration-fabric-MC1.21.3-fabric-refmap.json",
   "minVersion": "0.8",
   "injectors": {
     "defaultRequire": 1
