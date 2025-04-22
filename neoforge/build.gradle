@@ -70,14 +70,37 @@ shadowJar {
     configurations = [project.configurations.shadowBundle]
     archiveClassifier = 'dev-shadow'
 
-    relocate 'org.slf4j', 'dcshadow.org.slf4j'
+    exclude 'com/google/errorprone/**'
+    exclude 'META-INF/maven/com.google.errorprone/**'
+
+    // Optional: verify it's not sneaking through other channels
+    dependencies {
+        exclude(dependency('com.google.errorprone:error_prone_annotations'))
+    }
+
+    relocate 'org.slf4j', 'dcshadow.org.slf4j' // keep your existing relocate
 }
+
 
 
 
 remapJar {
     input.set shadowJar.archiveFile
+    dependsOn shadowJar
 }
+
+configurations.all {
+    resolutionStrategy.eachDependency {
+        if (requested.group == "com.google.guava" && requested.name == "guava") {
+            useTarget("com.google.guava:guava:33.3.1-jre")
+        }
+    }
+
+    // Globally exclude errorprone no matter where it comes from
+    exclude group: 'com.google.errorprone', module: 'error_prone_annotations'
+}
+
+
 modrinth{
     if (project.hasProperty('modrinth.apikey')) { // $GRADLE_USER_HOME/gradle.properties
         token = project.getProperty("modrinth.apikey") // Use an environment property!
