@@ -57,6 +57,8 @@ dependencies {
 
     //Styled Chat
     modCompileOnly "maven.modrinth:styled-chat:2.8.0+1.21.5"
+    // For embedding a fallback copy (which Shadow will relocate):
+    shadowBundle "maven.modrinth:styled-chat:2.8.0+1.21.5"
 }
 
 processResources {
@@ -70,6 +72,9 @@ processResources {
 shadowJar {
     configurations = [project.configurations.shadowBundle]
     archiveClassifier = 'dev-shadow'
+
+    // Relocate internal Styled chat for when Mod isn't present externally
+    relocate 'eu.pb4.styledchat', 'de.erdbeerbaerlp.dcintegration.shaded.styledchat'
 }
 
 remapJar {
