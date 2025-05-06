@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
  * Only used if StyledChat is not installed separately, due to the Mixin plugin logic.
  */
 @Pseudo
-@Mixin(targets = "eu.pb4.styledchat.StyledChatUtils")
+@Mixin(StyledChatUtils.class)
 public class StyledChatMixin {
     @Redirect(
             method = "modifyForSending",
