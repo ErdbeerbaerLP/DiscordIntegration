@@ -12,6 +12,7 @@ import dcshadow.net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import dcshadow.net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import de.erdbeerbaerlp.dcintegration.architectury.command.DCCommandSender;
 import de.erdbeerbaerlp.dcintegration.common.DiscordIntegration;
+import de.erdbeerbaerlp.dcintegration.common.compat.FloodgateUtils;
 import de.erdbeerbaerlp.dcintegration.common.storage.Configuration;
 import de.erdbeerbaerlp.dcintegration.common.storage.Localization;
 import de.erdbeerbaerlp.dcintegration.common.storage.linking.LinkManager;
@@ -171,6 +172,9 @@ public class ServerInterface implements McServerInterface {
 
     @Override
     public String getNameFromUUID(UUID uuid) {
+        if (FloodgateUtils.isBedrockPlayer(uuid)) {
+            return FloodgateUtils.getUsername(uuid);
+        }
         return server.getSessionService().fetchProfile(uuid, false).profile().getName();
     }
 
