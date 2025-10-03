@@ -19,7 +19,7 @@ public class ServerInterfaceImpl {
     }
 
     public static String getLoaderVersion() {
-        return FMLLoader.getLauncherInfo() + " (MC: " + FMLLoader.versionInfo().mcVersion() + ")";
+        return FMLLoader.getCurrent().getVersionInfo() + " (MC: " + FMLLoader.getCurrent().getVersionInfo().mcVersion() + ")";
     }
 
     public static boolean playerHasPermissionsX(UUID player, String... permissions) {

@@ -171,7 +171,7 @@ public class ServerInterface implements McServerInterface {
 
     @Override
     public String getNameFromUUID(UUID uuid) {
-        return server.getSessionService().fetchProfile(uuid, false).profile().getName();
+        return server.services().profileResolver().fetchById(uuid).orElseThrow().name();
     }
 
     @Override
