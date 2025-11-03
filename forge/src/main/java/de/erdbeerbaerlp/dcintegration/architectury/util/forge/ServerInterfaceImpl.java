@@ -1,15 +1,10 @@
-package de.erdbeerbaerlp.dcintegration.architectury.util.neoforge;
+package de.erdbeerbaerlp.dcintegration.architectury.util.forge;
 
-import de.erdbeerbaerlp.dcintegration.architectury.DiscordIntegrationMod;
-import de.erdbeerbaerlp.dcintegration.architectury.neoforge.DiscordIntegrationForge;
-import de.erdbeerbaerlp.dcintegration.common.DiscordIntegration;
+import de.erdbeerbaerlp.dcintegration.architectury.forge.DiscordIntegrationForge;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.fml.ModList;
-import net.neoforged.fml.loading.FMLLoader;
-import net.neoforged.neoforge.server.ServerLifecycleHooks;
-import net.neoforged.neoforge.server.permission.PermissionAPI;
-import redstonedubstep.mods.vanishmod.VanishUtil;
+import net.minecraftforge.fml.loading.FMLLoader;
+import net.minecraftforge.server.permission.PermissionAPI;
 
 import java.util.UUID;
 
@@ -23,7 +18,8 @@ public class ServerInterfaceImpl {
     }
 
     public static boolean playerHasPermissionsX(UUID player, String... permissions) {
-        final ServerPlayer serverPlayer = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayer(player);
+        final ServerPlayer serverPlayer = DiscordIntegrationForge.getCurrentServer()
+                .getPlayerList().getPlayer(player);
         for (String p : permissions) {
             if (serverPlayer != null) {
                 if (PermissionAPI.getPermission(serverPlayer, DiscordIntegrationForge.nodes.get(p))) {
@@ -48,11 +44,6 @@ public class ServerInterfaceImpl {
     }
 
     public static boolean checkVanish(UUID player) {
-        if (ModList.get().isLoaded("vmod")) {
-            final ServerPlayer p = DiscordIntegrationMod.server.getPlayerList().getPlayer(player);
-            if (p != null)
-                if(VanishUtil.isVanished(p)) return VanishUtil.isVanished(p);
-        }
-        return false;
+        return false; // No vanish mod support on Forge for 1.21.6/7
     }
 }

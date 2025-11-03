@@ -13,7 +13,6 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec2;
@@ -21,14 +20,12 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.concurrent.CompletableFuture;
 
-
 public class DCCommandSender implements CommandSource {
     private final CompletableFuture<InteractionHook> cmdMsg;
     private final Component name;
 
     private CompletableFuture<Message> cmdMessage;
     public final StringBuilder message = new StringBuilder();
-
 
     public DCCommandSender(CompletableFuture<InteractionHook> cmdMsg, User user) {
         final Member member = DiscordIntegration.INSTANCE.getMemberById(user.getId());
@@ -51,6 +48,7 @@ public class DCCommandSender implements CommandSource {
 
         this.cmdMsg = cmdMsg;
     }
+
     public DCCommandSender() {
         this.cmdMsg = null;
         this.name = Component.literal("Discord Integration");
@@ -61,19 +59,20 @@ public class DCCommandSender implements CommandSource {
         return MessageUtils.convertMCToMarkdown(component.getString());
     }
 
-
     @Override
     public void sendSystemMessage(Component p_215097_) {
         message.append(textComponentToDiscordMessage(p_215097_)).append("\n");
-        if (cmdMsg != null)
-            if (cmdMessage == null)
+        if (cmdMsg != null) {
+            if (cmdMessage == null) {
                 cmdMsg.thenAccept((msg) -> {
                     cmdMessage = msg.editOriginal(message.toString().trim()).submit();
                 });
-            else
+            } else {
                 cmdMessage.thenAccept((msg) -> {
                     cmdMessage = msg.editMessage(message.toString().trim()).submit();
                 });
+            }
+        }
     }
 
     @Override
@@ -94,6 +93,4 @@ public class DCCommandSender implements CommandSource {
     public boolean shouldInformAdmins() {
         return true;
     }
-
-
 }

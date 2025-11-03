@@ -28,9 +28,9 @@ versionRange = "[1.21.1,]"
 ordering = "NONE"
 side = "SERVER"
 [[dependencies.dcintegration]]
-modId = "neoforge"
+modId = "forge"
 mandatory = true
-versionRange = "[21.1.0-beta,)"
+versionRange = "[51,)"
 ordering = "NONE"
 side = "BOTH"
 

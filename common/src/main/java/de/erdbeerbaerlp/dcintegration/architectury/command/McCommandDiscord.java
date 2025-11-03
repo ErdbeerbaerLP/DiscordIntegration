@@ -16,6 +16,7 @@ import net.minecraft.network.chat.*;
 public class McCommandDiscord {
     public McCommandDiscord(CommandDispatcher<CommandSourceStack> dispatcher) {
         final LiteralArgumentBuilder<CommandSourceStack> l = Commands.literal("discord");
+
         if (Configuration.instance().ingameCommand.enabled) l.executes((ctx) -> {
             ctx.getSource().sendSuccess(() -> ComponentUtils.mergeStyles(Component.literal(Configuration.instance().ingameCommand.message),
                     Style.EMPTY.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(Configuration.instance().ingameCommand.hoverMessage)))
@@ -28,9 +29,11 @@ public class McCommandDiscord {
                 return true;
             }
         });
+
         for (final MCSubCommand cmd : McCommandRegistry.getCommands()) {
             l.then(Commands.literal(cmd.getName()));
         }
+
         dispatcher.register(l);
     }
 }

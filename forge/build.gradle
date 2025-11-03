@@ -8,7 +8,7 @@ plugins {
 
 architectury {
     platformSetupLoomIde()
-    fabric()
+    forge()
 }
 
 configurations {
@@ -18,7 +18,7 @@ configurations {
     }
     compileClasspath.extendsFrom common
     runtimeClasspath.extendsFrom common
-    developmentFabric.extendsFrom common
+    developmentForge.extendsFrom common
 
     // Files in this configuration will be bundled into your mod using the Shadow plugin.
     // Don't use the `shadow` configuration from the plugin itself as it's meant for excluding files.
@@ -28,43 +28,52 @@ configurations {
     }
 }
 repositories {
-    mavenCentral()
-    maven {
+        maven {
         name = "Modrinth"
         url = "https://api.modrinth.com/maven"
         content {
             includeGroup "maven.modrinth"
         }
     }
-    maven { url "https://maven.nucleoid.xyz/" }
+    maven { url 'https://jitpack.io' }
+}
+
+configurations.all {
+    resolutionStrategy.eachDependency {
+        if (requested.group == "com.google.guava" && requested.name == "guava") {
+            useTarget("com.google.guava:guava:33.3.1-jre")
+        }
+    }
+
+    // Globally exclude errorprone no matter where it comes from
+    exclude group: 'com.google.errorprone', module: 'error_prone_annotations'
+}
+
+jar {
+    manifest {
+        attributes(["MixinConfigs": "dcintegration.mixins.json"])
+    }
 }
 
 dependencies {
-    modImplementation "net.fabricmc:fabric-loader:$rootProject.fabric_loader_version"
-
-    // Fabric API. This is technically optional, but you probably want it anyway.
-    modImplementation "net.fabricmc.fabric-api:fabric-api:$rootProject.fabric_api_version"
+    forge "net.minecraftforge:forge:$rootProject.forge_version"
 
     common(project(path: ':common', configuration: 'namedElements')) { transitive false }
-    shadowBundle project(path: ':common', configuration: 'transformProductionFabric')
-    common(project(path: ':fabric-like', configuration: 'namedElements')) { transitive false }
-    shadowBundle project(path: ':fabric-like', configuration: 'transformProductionFabric')
+    shadowBundle project(path: ':common', configuration: 'transformProductionForge')
+    modImplementation("de.erdbeerbaerlp:dcintegration.common:$rootProject.core_version")
+    forgeRuntimeLibrary("de.erdbeerbaerlp:dcintegration.common:$rootProject.core_version")
+    shadowBundle("de.erdbeerbaerlp:dcintegration.common:$rootProject.core_version")
 
-    include "de.erdbeerbaerlp:dcintegration.common:$rootProject.core_version"
+    //Dynmap-API
+    modCompileOnly('com.github.webbukkit:DynmapCoreAPI:2.5')
 
-    include(modImplementation("me.lucko:fabric-permissions-api:$rootProject.fabric_permissions_api"))
-    modImplementation include("eu.pb4:placeholder-api:$rootProject.placeholder_api")
 
-    //Styled Chat
-    modCompileOnly "maven.modrinth:styled-chat:$rootProject.styled_chat"
-    // For embedding a fallback copy (which Shadow will relocate):
-    shadowBundle "maven.modrinth:styled-chat:$rootProject.styled_chat"
 }
 
 processResources {
     inputs.property 'version', project.version
 
-    filesMatching('fabric.mod.json') {
+    filesMatching('META-INF/mods.toml') {
         expand version: project.version
     }
 }
@@ -73,52 +82,74 @@ shadowJar {
     configurations = [project.configurations.shadowBundle]
     archiveClassifier = 'dev-shadow'
 
-    // Relocate internal Styled chat for when Mod isn't present externally
-    relocate 'eu.pb4.styledchat', 'de.erdbeerbaerlp.dcintegration.shaded.styledchat'
+    exclude 'com/google/errorprone/**'
+    exclude 'META-INF/maven/com.google.errorprone/**'
+
+    // Optional: verify it's not sneaking through other channels
+    dependencies {
+        exclude(dependency('com.google.errorprone:error_prone_annotations'))
+    }
+
+    relocate 'org.slf4j', 'dcshadow.org.slf4j'
 }
+
+
+
 
 remapJar {
     input.set shadowJar.archiveFile
+    dependsOn shadowJar
 }
+
+configurations.all {
+    exclude group: "net.fabricmc", module: "fabric-loader"
+    exclude group: "net.fabricmc.fabric-api"
+
+    resolutionStrategy.eachDependency {
+        if (requested.group == "com.google.guava" && requested.name == "guava") {
+            useTarget("com.google.guava:guava:33.3.1-jre")
+        }
+    }
+
+    // Globally exclude errorprone no matter where it comes from
+    exclude group: 'com.google.errorprone', module: 'error_prone_annotations'
+}
+
+
 modrinth{
     if (project.hasProperty('modrinth.apikey')) { // $GRADLE_USER_HOME/gradle.properties
         token = project.getProperty("modrinth.apikey") // Use an environment property!
         projectId = 'rbJ7eS5V'
         versionNumber = "${project.mod_version}-${project.minecraft_version}"
-        versionName = "DiscordIntegration-Fabric ${project.mod_version} (MC ${project.minecraft_version})"
+        versionName = "DiscordIntegration-Forge ${project.mod_version} (MC ${project.minecraft_version})"
         uploadFile = remapJar
         changelog = project.changelog
         gameVersions = ["${project.minecraft_version}"]
-        loaders = ['fabric']
+        loaders = ['forge']
         dependencies {
-            required.project "fabric-api"
-            optional.project "vanish"
             optional.project "dynmap"
             optional.project "luckperms"
-            optional.project "styled-chat"
         }
         versionType = project.releaseType.toUpperCase()
     }
 }
-
 task publishCurseForge(type: net.darkhax.curseforgegradle.TaskPublishCurseForge) {
     if (project.hasProperty('curseforge.apikey')) { // $GRADLE_USER_HOME/gradle.properties
         apiToken = getProperty("curseforge.apikey")
 
-        UploadArtifact mainFile = upload(493679, remapJar)
+        UploadArtifact mainFile = upload(324952, remapJar)
         mainFile.releaseType = project.releaseType.toLowerCase()
         mainFile.changelog = project.changelog
         mainFile.changelogType = 'markdown'
-        mainFile.displayName = "DiscordIntegration-Fabric ${project.mod_version} (MC ${project.minecraft_version})"
-        mainFile.addModLoader("fabric")
+        mainFile.displayName = "DiscordIntegration-Forge ${project.mod_version} (MC ${project.minecraft_version})"
+        mainFile.addModLoader("forge")
         mainFile.addGameVersion("${project.minecraft_version}")
 
-        mainFile.addRequirement("fabric-api")
-        mainFile.addOptional("vanishmod")
         mainFile.addOptional("dynmapforge")
         mainFile.addOptional("luckperms")
-        mainFile.addOptional("styled-chat")
 
     }
 }
+
+
 tasks.release.dependsOn(tasks.build, publishCurseForge, tasks.modrinth)

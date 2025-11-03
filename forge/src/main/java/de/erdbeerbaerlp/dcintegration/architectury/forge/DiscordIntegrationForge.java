@@ -1,23 +1,22 @@
-package de.erdbeerbaerlp.dcintegration.architectury.neoforge;
+package de.erdbeerbaerlp.dcintegration.architectury.forge;
 
 import de.erdbeerbaerlp.dcintegration.common.compat.DynmapListener;
 import de.erdbeerbaerlp.dcintegration.common.storage.Configuration;
 import de.erdbeerbaerlp.dcintegration.common.util.MinecraftPermission;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.ModList;
-import net.neoforged.fml.common.Mod;
-
 import de.erdbeerbaerlp.dcintegration.architectury.DiscordIntegrationMod;
-import net.neoforged.fml.event.lifecycle.FMLDedicatedServerSetupEvent;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.server.ServerStartedEvent;
-import net.neoforged.neoforge.event.server.ServerStartingEvent;
-import net.neoforged.neoforge.event.server.ServerStoppedEvent;
-import net.neoforged.neoforge.event.server.ServerStoppingEvent;
-import net.neoforged.neoforge.server.permission.events.PermissionGatherEvent;
-import net.neoforged.neoforge.server.permission.nodes.PermissionNode;
-import net.neoforged.neoforge.server.permission.nodes.PermissionTypes;
+import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.server.ServerStartedEvent;
+import net.minecraftforge.event.server.ServerStartingEvent;
+import net.minecraftforge.event.server.ServerStoppedEvent;
+import net.minecraftforge.event.server.ServerStoppingEvent;
+import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLDedicatedServerSetupEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.server.permission.events.PermissionGatherEvent;
+import net.minecraftforge.server.permission.nodes.PermissionNode;
+import net.minecraftforge.server.permission.nodes.PermissionTypes;
 
 import java.util.HashMap;
 
@@ -25,45 +24,46 @@ import static de.erdbeerbaerlp.dcintegration.common.DiscordIntegration.LOGGER;
 
 @Mod(DiscordIntegrationMod.MOD_ID)
 public final class DiscordIntegrationForge {
-    public DiscordIntegrationForge(IEventBus modEventBus) {
+    public static final HashMap<String, PermissionNode<Boolean>> nodes = new HashMap<>();
+    private static MinecraftServer currentServer = null;
+
+    public DiscordIntegrationForge() {
         DiscordIntegrationMod.init();
-        if (Configuration.instance().general.botToken.equals("INSERT BOT TOKEN HERE")) { //Prevent events when token not set or on client
-            LOGGER.error("Please check the config file and set an bot token");
+        if (Configuration.instance().general.botToken.equals("INSERT BOT TOKEN HERE")) {
+            LOGGER.error("Please check the config file and set a bot token");
         } else {
-            modEventBus.addListener(this::serverSetup);
-            NeoForge.EVENT_BUS.register(this);
+            MinecraftForge.EVENT_BUS.register(this);
         }
     }
-    public void serverSetup(FMLDedicatedServerSetupEvent ev) {
 
+    @SubscribeEvent
+    public void serverSetup(final FMLDedicatedServerSetupEvent ev) {
     }
+
     @SubscribeEvent
     public void serverStarting(final ServerStartingEvent ev) {
         DiscordIntegrationMod.serverStarting(ev.getServer());
-
         if (ModList.get().getModContainerById("dynmap").isPresent()) {
             new DynmapListener().register();
         }
-        if (ModList.get().getModContainerById("vmod").isPresent()) {
-            NeoForge.EVENT_BUS.register(new VanishEventListener());
-        }
-
     }
+
     @SubscribeEvent
     public void serverStarted(final ServerStartedEvent ev) {
+        currentServer = ev.getServer();
         DiscordIntegrationMod.serverStarted(ev.getServer());
-
     }
+
     @SubscribeEvent
     public void serverStopping(final ServerStoppingEvent ev) {
         DiscordIntegrationMod.serverStopping(ev.getServer());
-
     }
+
     @SubscribeEvent
     public void serverStopped(final ServerStoppedEvent ev) {
+        currentServer = null;
         DiscordIntegrationMod.serverStopped(ev.getServer());
     }
-    public static final HashMap<String, PermissionNode<Boolean>> nodes = new HashMap();
 
     @SubscribeEvent
     public void addPermissions(final PermissionGatherEvent.Nodes ev) {
@@ -73,4 +73,7 @@ public final class DiscordIntegrationForge {
         ev.addNodes(nodes.values().toArray(new PermissionNode[0]));
     }
 
+    public static MinecraftServer getCurrentServer() {
+        return currentServer;
+    }
 }

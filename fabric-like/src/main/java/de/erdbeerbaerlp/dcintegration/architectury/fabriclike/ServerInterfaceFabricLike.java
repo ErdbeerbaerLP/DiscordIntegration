@@ -1,10 +1,14 @@
 package de.erdbeerbaerlp.dcintegration.architectury.fabriclike;
 
 import de.erdbeerbaerlp.dcintegration.common.util.MinecraftPermission;
+import me.drex.vanish.api.VanishAPI;
 import me.lucko.fabric.api.permissions.v0.Permissions;
+import net.fabricmc.loader.impl.FabricLoaderImpl;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.UUID;
+
+import static de.erdbeerbaerlp.dcintegration.architectury.DiscordIntegrationMod.server;
 
 public class ServerInterfaceFabricLike {
     public static boolean playerHasPermissionsX(UUID player, String... permissions) {
@@ -28,6 +32,12 @@ public class ServerInterfaceFabricLike {
                     }
                 }
             }
+        }
+        return false;
+    }
+    public static boolean checkVanish(UUID player){
+        if(FabricLoaderImpl.INSTANCE.isModLoaded("melius-vanish")){
+            if(VanishAPI.isVanished(server, player)) return true;
         }
         return false;
     }

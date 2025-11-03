@@ -27,15 +27,15 @@ public class ServerPlayerMixin {
     @Inject(at = @At(value = "TAIL"), method = "die")
     private void onPlayerDeath(DamageSource s, CallbackInfo info) {
         ServerPlayer p = (ServerPlayer) (Object) this;
-
         if (DiscordIntegration.INSTANCE != null) {
+            if(INSTANCE.getServerInterface().isPlayerVanish(p.getUUID())) return;
             if (LinkManager.isPlayerLinked(p.getUUID()) && LinkManager.getLink(null, p.getUUID()).settings.hideFromDiscord)
                 return;
             final Component deathMessage = s.getLocalizedDeathMessage(p);
             final MessageEmbed embed = MessageUtilsImpl.genItemStackEmbedIfAvailable(deathMessage, p.level());
             if (!Localization.instance().playerDeath.isBlank())
                 if (Configuration.instance().embedMode.enabled && Configuration.instance().embedMode.deathMessage.asEmbed) {
-                    final String avatarURL = Configuration.instance().webhook.playerAvatarURL.replace("%uuid%", p.getUUID().toString()).replace("%uuid_dashless%", p.getUUID().toString().replace("-", "")).replace("%name%", p.getName().getString()).replace("%randomUUID%", UUID.randomUUID().toString());
+                    final String avatarURL = INSTANCE.getSkinURL().replace("%uuid%", p.getUUID().toString()).replace("%uuid_dashless%", p.getUUID().toString().replace("-", "")).replace("%name%", p.getName().getString()).replace("%randomUUID%", UUID.randomUUID().toString());
                     if(!Configuration.instance().embedMode.deathMessage.customJSON.isBlank()){
                         final EmbedBuilder b = Configuration.instance().embedMode.deathMessage.toEmbedJson(Configuration.instance().embedMode.deathMessage.customJSON
                                 .replace("%uuid%", p.getUUID().toString())
