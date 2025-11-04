@@ -20,4 +20,7 @@ public class ServerInterfaceImpl {
     public static boolean playerHasPermissionsX(Player player, String... permissions) {
         return ServerInterfaceFabricLike.playerHasPermissionsX(player,permissions);
     }
+    public static boolean checkVanish(UUID player) {
+        return ServerInterfaceFabricLike.checkVanish(player);
+    }
 }

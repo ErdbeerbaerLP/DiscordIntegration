@@ -1,9 +1,9 @@
 plugins {
-    id 'dev.architectury.loom' version '1.7-SNAPSHOT' apply false
+    id 'dev.architectury.loom' version '1.10-SNAPSHOT' apply false
     id 'architectury-plugin' version '3.4-SNAPSHOT'
-    id 'com.github.johnrengelman.shadow' version '8.1.1' apply false
+    id 'com.gradleup.shadow' version '8+' apply false
     id "com.modrinth.minotaur" version "2.+" apply false
-    id "com.matthewprenger.cursegradle" version "1.4.0" apply false
+    id 'net.darkhax.curseforgegradle' version "1.1.15" apply false
 }
 architectury {
     minecraft = project.minecraft_version
@@ -22,7 +22,7 @@ subprojects {
     apply plugin: 'architectury-plugin'
     apply plugin: 'maven-publish'
     apply plugin: 'com.modrinth.minotaur'
-    apply plugin: 'com.github.johnrengelman.shadow'
+    apply plugin: 'com.gradleup.shadow'
     base {
         // Set up a suffixed format for the mod jar names, e.g. `example-fabric`.
         archivesName = "$rootProject.archives_name-$project.name-MC$rootProject.minecraft_version"

@@ -4,6 +4,7 @@ import com.mojang.authlib.GameProfile;
 import dcshadow.net.kyori.adventure.text.Component;
 import dcshadow.net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import de.erdbeerbaerlp.dcintegration.architectury.util.MessageUtilsImpl;
+import de.erdbeerbaerlp.dcintegration.architectury.util.SerializeComponentUtils;
 import de.erdbeerbaerlp.dcintegration.common.DiscordIntegration;
 import de.erdbeerbaerlp.dcintegration.common.WorkThread;
 import de.erdbeerbaerlp.dcintegration.common.compat.FloodgateUtils;
@@ -47,7 +48,7 @@ public class PlayerManagerMixin {
         if (eventKick != null) {
             final String jsonComp = GsonComponentSerializer.gson().serialize(eventKick).replace("\\\\n", "\n");
             try {
-                final net.minecraft.network.chat.Component comp = net.minecraft.network.chat.Component.Serializer.fromJson(jsonComp, VanillaRegistries.createLookup());
+                final net.minecraft.network.chat.Component comp = SerializeComponentUtils.fromJson(jsonComp, VanillaRegistries.createLookup());
                 cir.setReturnValue(comp);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -70,12 +71,13 @@ public class PlayerManagerMixin {
     @Inject(at = @At(value = "TAIL"), method = "placeNewPlayer")
     private void onPlayerJoin(Connection connection, ServerPlayer p, CommonListenerCookie commonListenerCookie, CallbackInfo ci) {
         if (DiscordIntegration.INSTANCE != null) {
+            if(INSTANCE.getServerInterface().isPlayerVanish(p.getUUID())) return;
             if (LinkManager.isPlayerLinked(p.getUUID()) && LinkManager.getLink(null, p.getUUID()).settings.hideFromDiscord)
                 return;
             LinkManager.checkGlobalAPI(p.getUUID());
             if (!Localization.instance().playerJoin.isBlank()) {
                 if (Configuration.instance().embedMode.enabled && Configuration.instance().embedMode.playerJoinMessage.asEmbed) {
-                    final String avatarURL = Configuration.instance().webhook.playerAvatarURL.replace("%uuid%", p.getUUID().toString()).replace("%uuid_dashless%", p.getUUID().toString().replace("-", "")).replace("%name%", p.getName().getString()).replace("%randomUUID%", UUID.randomUUID().toString());
+                    final String avatarURL = INSTANCE.getSkinURL().replace("%uuid%", p.getUUID().toString()).replace("%uuid_dashless%", p.getUUID().toString().replace("-", "")).replace("%name%", p.getName().getString()).replace("%randomUUID%", UUID.randomUUID().toString());
                     if (!Configuration.instance().embedMode.playerJoinMessage.customJSON.isBlank()) {
                         final EmbedBuilder b = Configuration.instance().embedMode.playerJoinMessage.toEmbedJson(Configuration.instance().embedMode.playerJoinMessage.customJSON
                                 .replace("%uuid%", p.getUUID().toString())
@@ -97,15 +99,26 @@ public class PlayerManagerMixin {
             }
             // Fix link status (if user does not have role, give the role to the user, or vice versa)
             WorkThread.executeJob(() -> {
-                if (Configuration.instance().linking.linkedRoleID.equals("0")) return;
                 final UUID uuid = p.getUUID();
-                if (!LinkManager.isPlayerLinked(uuid)) return;
+                if (!LinkManager.isPlayerLinked(uuid)) {
+                    return;
+                }
+
+                final Member member = DiscordIntegration.INSTANCE.getMemberById(LinkManager.getLink(null, uuid).discordID);
+
+                if (Configuration.instance().linking.shouldNickname) {
+                    member.modifyNickname(MessageUtilsImpl.formatPlayerName(p)).queue();
+                }
+
+                if (Configuration.instance().linking.linkedRoleID.equals("0")) {
+                    return;
+                }
+
                 final Guild guild = DiscordIntegration.INSTANCE.getChannel().getGuild();
                 final Role linkedRole = guild.getRoleById(Configuration.instance().linking.linkedRoleID);
-                if (LinkManager.isPlayerLinked(uuid)) {
-                    final Member member = DiscordIntegration.INSTANCE.getMemberById(LinkManager.getLink(null, uuid).discordID);
-                    if (!member.getRoles().contains(linkedRole))
-                        guild.addRoleToMember(member, linkedRole).queue();
+
+                if (!member.getRoles().contains(linkedRole)) {
+                    guild.addRoleToMember(member, linkedRole).queue();
                 }
             });
         }
