@@ -18,6 +18,8 @@ import net.minecraft.commands.Commands;
 import net.minecraft.data.registries.VanillaRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.permissions.Permission;
+import net.minecraft.server.permissions.PermissionLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import org.apache.commons.lang3.ArrayUtils;
@@ -95,7 +97,7 @@ public class CommandManagerMixin {
                                     } else if (((ServerInterface) DiscordIntegration.INSTANCE.getServerInterface()).playerHasPermissions(player, MinecraftPermission.RUN_DISCORD_COMMAND_ADMIN)) {
                                         final String txt = GsonComponentSerializer.gson().serialize(mcSubCommand.execute(cmdArgs, player.getUUID()));
                                         source.sendSuccess(() -> SerializeComponentUtils.fromJson(txt, player.level().registryAccess()), false);
-                                    } else if (source.hasPermission(4)) {
+                                    } else if (source.permissions().hasPermission(new Permission.HasCommandLevel(PermissionLevel.OWNERS))) {
                                         final String txt = GsonComponentSerializer.gson().serialize(mcSubCommand.execute(cmdArgs, player.getUUID()));
                                         source.sendSuccess(() -> SerializeComponentUtils.fromJson(txt, player.level().registryAccess()), false);
                                     } else {
@@ -115,7 +117,7 @@ public class CommandManagerMixin {
                                     } else if (((ServerInterface) DiscordIntegration.INSTANCE.getServerInterface()).playerHasPermissions(player, MinecraftPermission.RUN_DISCORD_COMMAND_ADMIN)) {
                                         final String txt = GsonComponentSerializer.gson().serialize(mcSubCommand.execute(cmdArgs, player.getUUID()));
                                         source.sendSuccess(() -> SerializeComponentUtils.fromJson(txt, VanillaRegistries.createLookup()), false);
-                                    } else if (source.hasPermission(4)) {
+                                    } else if (source.permissions().hasPermission(new Permission.HasCommandLevel(PermissionLevel.OWNERS))) {
                                         final String txt = GsonComponentSerializer.gson().serialize(mcSubCommand.execute(cmdArgs, player.getUUID()));
                                         source.sendSuccess(() -> SerializeComponentUtils.fromJson(txt, VanillaRegistries.createLookup()), false);
                                     } else {
