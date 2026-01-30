@@ -24,13 +24,13 @@ displayTest="IGNORE_SERVER_VERSION"
 [[dependencies.dcintegration]]
 modId = "minecraft"
 mandatory = true
-versionRange = "[1.21.9,]"
+versionRange = "[1.21.11,]"
 ordering = "NONE"
 side = "SERVER"
 [[dependencies.dcintegration]]
 modId = "neoforge"
 mandatory = true
-versionRange = "[21.9.0-beta,)"
+versionRange = "[21.11.37-beta,)"
 ordering = "NONE"
 side = "BOTH"
 
