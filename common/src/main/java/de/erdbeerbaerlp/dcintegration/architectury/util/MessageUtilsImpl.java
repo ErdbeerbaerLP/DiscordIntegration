@@ -81,7 +81,8 @@ public class MessageUtilsImpl extends MessageUtils {
                                         if (e != null)
                                             if (TooltipUtils.showsInTooltip(is))
                                                 for (Object2IntMap.Entry<Holder<Enchantment>> ench : e.entrySet()) {
-                                                    tooltip.append(ChatFormatting.stripFormatting(ench.getKey().value().getFullname(ench.getKey(),e.getLevel(ench.getKey())).getString())).append("\n");
+                                                    ench.getKey().value();
+                                                    tooltip.append(ChatFormatting.stripFormatting(Enchantment.getFullname(ench.getKey(),e.getLevel(ench.getKey())).getString())).append("\n");
                                                 }
                                     }
                                     //Add Lores

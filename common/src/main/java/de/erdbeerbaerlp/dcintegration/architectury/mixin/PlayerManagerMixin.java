@@ -1,6 +1,5 @@
 package de.erdbeerbaerlp.dcintegration.architectury.mixin;
 
-import com.mojang.authlib.GameProfile;
 import dcshadow.net.kyori.adventure.text.Component;
 import dcshadow.net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import de.erdbeerbaerlp.dcintegration.architectury.util.MessageUtilsImpl;

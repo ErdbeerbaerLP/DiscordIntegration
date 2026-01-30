@@ -143,7 +143,7 @@ public class Metrics {
                 Executors.newSingleThreadScheduledExecutor(r -> {
                     Thread t = Executors.defaultThreadFactory().newThread(r);
                     t.setDaemon(true);
-                    t.setName("bStats-Metrics-test "+r.toString());
+                    t.setName("bStats-Metrics-test "+ r);
                     t.setPriority(Thread.MIN_PRIORITY);
                     return t;
                 });

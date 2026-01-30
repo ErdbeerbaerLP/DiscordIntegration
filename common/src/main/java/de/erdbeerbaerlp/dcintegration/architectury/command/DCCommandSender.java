@@ -12,7 +12,6 @@ import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
-import net.minecraft.network.chat.Style;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec2;
@@ -99,7 +98,7 @@ public class DCCommandSender implements CommandSource {
                 this.name.getString(),
                 this.name,
                 DiscordIntegrationMod.server,
-                (Entity) null
+                null
         );
     }
 

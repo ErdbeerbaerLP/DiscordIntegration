@@ -37,7 +37,7 @@ public class ServerInterfaceFabricLike {
     }
     public static boolean checkVanish(UUID player){
         if(FabricLoaderImpl.INSTANCE.isModLoaded("melius-vanish")){
-            if(VanishAPI.isVanished(server, player)) return true;
+            return VanishAPI.isVanished(server, player);
         }
         return false;
     }
