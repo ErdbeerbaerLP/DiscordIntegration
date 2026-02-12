@@ -12,11 +12,14 @@ import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.permissions.Permission;
-import net.minecraft.server.permissions.PermissionLevel;
+import net.minecraft.server.permissions.LevelBasedPermissionSet;
+import net.minecraft.server.permissions.PermissionSet;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
+import org.jspecify.annotations.Nullable;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -94,8 +97,8 @@ public class DCCommandSender implements CommandSource {
                 this,
                 Vec3.ZERO,
                 Vec2.ZERO,
-                DiscordIntegrationMod.server.getLevel(ServerLevel.OVERWORLD),
-                permission -> permission instanceof Permission.HasCommandLevel(PermissionLevel level) && level.isEqualOrHigherThan(PermissionLevel.OWNERS),
+                DiscordIntegrationMod.server.findRespawnDimension(),
+                LevelBasedPermissionSet.OWNER,
                 this.name.getString(),
                 this.name,
                 DiscordIntegrationMod.server,
