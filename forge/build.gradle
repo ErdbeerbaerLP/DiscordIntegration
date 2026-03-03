@@ -1,3 +1,4 @@
+import net.darkhax.curseforgegradle.TaskPublishCurseForge
 import net.darkhax.curseforgegradle.UploadArtifact
 
 plugins {
@@ -38,7 +39,7 @@ repositories {
     maven { url 'https://jitpack.io' }
 }
 
-configurations.all {
+configurations.configureEach {
     resolutionStrategy.eachDependency {
         if (requested.group == "com.google.guava" && requested.name == "guava") {
             useTarget("com.google.guava:guava:33.3.1-jre")
@@ -101,7 +102,7 @@ remapJar {
     dependsOn shadowJar
 }
 
-configurations.all {
+configurations.configureEach {
     resolutionStrategy.eachDependency {
         if (requested.group == "com.google.guava" && requested.name == "guava") {
             useTarget("com.google.guava:guava:33.3.1-jre")
@@ -130,7 +131,7 @@ modrinth{
         versionType = project.releaseType.toUpperCase()
     }
 }
-task publishCurseForge(type: net.darkhax.curseforgegradle.TaskPublishCurseForge) {
+tasks.register('publishCurseForge', TaskPublishCurseForge) {
     if (project.hasProperty('curseforge.apikey')) { // $GRADLE_USER_HOME/gradle.properties
         apiToken = getProperty("curseforge.apikey")
 

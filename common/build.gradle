@@ -24,7 +24,7 @@ dependencies {
 artifacts {
     archives tasks.shadowJar
 }
-configurations.all {
+configurations.configureEach {
     exclude group: 'com.google.errorprone', module: 'error_prone_annotations'
 }
 publishing {
