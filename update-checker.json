@@ -1,7 +1,7 @@
 [
   {
     "version": "3.1.0.3",
-    "changelog": "Fix Advancement Channel Bug",
-    "type": "release"
+    "changelog": "Fix advancement channel bug, Fix vanilla command permission issue",
+    "type": "beta"
   }
 ]
