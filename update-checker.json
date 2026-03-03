@@ -1,7 +1,7 @@
 [
   {
-    "version": "3.1.0",
-    "changelog": "Initial release using architectury!",
+    "version": "3.1.0.3",
+    "changelog": "Fix Advancement Channel Bug",
     "type": "release"
   }
 ]

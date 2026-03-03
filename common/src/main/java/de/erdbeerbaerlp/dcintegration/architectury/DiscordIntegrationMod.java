@@ -116,7 +116,7 @@ public final class DiscordIntegrationMod {
                 }
             DiscordIntegration.INSTANCE.startThreads();
         }
-        UpdateChecker.runUpdateCheck("https://raw.githubusercontent.com/ErdbeerbaerLP/DiscordIntegration/1.21.1/update-checker.json");
+        UpdateChecker.runUpdateCheck("https://raw.githubusercontent.com/ErdbeerbaerLP/DiscordIntegration/1.21.11/update-checker.json");
         if (!DownloadSourceChecker.checkDownloadSource(new File(DiscordIntegrationMod.class.getProtectionDomain().getCodeSource().getLocation().getPath().split("%")[0]))) {
             LOGGER.warn("You likely got this mod from a third party website.");
             LOGGER.warn("Some of such websites are distributing malware or old versions.");
