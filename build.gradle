@@ -1,61 +1,148 @@
 plugins {
-    id 'dev.architectury.loom' version '1.13-SNAPSHOT' apply false
-    id 'architectury-plugin' version '3.4-SNAPSHOT'
-    id 'com.gradleup.shadow' version '9+' apply false
-    id "com.modrinth.minotaur" version "2.+" apply false
-    id 'net.darkhax.curseforgegradle' version "1.1.28" apply false
-}
-architectury {
-    minecraft = project.minecraft_version
+    id 'net.fabricmc.fabric-loom' version '1.+'
+    id 'maven-publish'
+    id 'com.gradleup.shadow' version '9+'
+    id 'com.modrinth.minotaur' version '2.+'
+    id 'net.darkhax.curseforgegradle' version '1.1.28'
 }
 
-allprojects {
-    group = rootProject.maven_group
-    version = rootProject.mod_version
+group = project.maven_group
+version = project.mod_version
 
-
+base {
+    archivesName = "${project.archives_name}-fabric-MC${project.minecraft_version}"
 }
 
-
-subprojects {
-    apply plugin: 'dev.architectury.loom'
-    apply plugin: 'architectury-plugin'
-    apply plugin: 'maven-publish'
-    apply plugin: 'com.modrinth.minotaur'
-    apply plugin: 'com.gradleup.shadow'
-    base {
-        // Set up a suffixed format for the mod jar names, e.g. `example-fabric`.
-        archivesName = "$rootProject.archives_name-$project.name-MC$rootProject.minecraft_version"
+repositories {
+    mavenCentral()
+    maven { url 'https://repo.erdbeerbaerlp.de/repository/maven-public/' }
+    maven {
+        name = 'Modrinth'
+        url = 'https://api.modrinth.com/maven'
+        content {
+            includeGroup 'maven.modrinth'
+        }
     }
-    tasks.register('release') {
-
-    }
-    repositories {
-        maven { url "https://repo.erdbeerbaerlp.de/repository/maven-public/" }
-
-    }
-    configurations.configureEach {
-        resolutionStrategy.cacheDynamicVersionsFor 3, 'minutes'
-        resolutionStrategy.cacheChangingModulesFor 3, 'minutes'
-    }
-    dependencies {
-        minecraft "net.minecraft:minecraft:$rootProject.minecraft_version"
-        mappings loom.officialMojangMappings()
-    }
-
-    java {
-        // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
-        // if it is present.
-        // If you remove this line, sources will not be generated.
-        withSourcesJar()
-
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
-    }
-
-    tasks.withType(JavaCompile).configureEach {
-        it.options.release = 21
-    }
-
-
+    maven { url 'https://maven.nucleoid.xyz/' }
 }
+
+configurations.configureEach {
+    resolutionStrategy.cacheDynamicVersionsFor 3, 'minutes'
+    resolutionStrategy.cacheChangingModulesFor 3, 'minutes'
+    exclude group: 'com.google.errorprone', module: 'error_prone_annotations'
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+
+    implementation "net.fabricmc:fabric-loader:${project.fabric_loader_version}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+
+    include implementation("de.erdbeerbaerlp:dcintegration.common:${project.core_version}")
+    include implementation("me.lucko:fabric-permissions-api:${project.fabric_permissions_api}")
+    include implementation("maven.modrinth:placeholder-api:${project.placeholder_api}")
+    include implementation("maven.modrinth:styled-chat:${project.styled_chat}")
+    include implementation("maven.modrinth:vanish:${project.vanish}")
+}
+
+processResources {
+    inputs.property 'version', project.version
+
+    filesMatching('fabric.mod.json') {
+        expand version: project.version
+    }
+}
+
+java {
+    withSourcesJar()
+    sourceCompatibility = JavaVersion.VERSION_25
+    targetCompatibility = JavaVersion.VERSION_25
+}
+
+tasks.withType(JavaCompile).configureEach {
+    it.options.release = 25
+}
+
+tasks.named('shadowJar') {
+    zip64 = true
+}
+
+jar {
+    exclude 'assets/dcintegration/icon-full.png'
+}
+
+//def publishJarTask = tasks.named('remapJar')
+//
+//modrinth {
+//    if (project.hasProperty('modrinth.apikey')) {
+//        token = project.getProperty('modrinth.apikey')
+//        projectId = 'rbJ7eS5V'
+//        versionNumber = "${project.mod_version}-${project.minecraft_version}"
+//        versionName = "DiscordIntegration-Fabric ${project.mod_version} (MC ${project.minecraft_version})"
+//        uploadFile = publishJarTask.get()
+//        changelog = project.changelog
+//        gameVersions = ["${project.minecraft_version}"]
+//        loaders = ['fabric']
+//        dependencies {
+//            required.project 'fabric-api'
+//            optional.project 'vanish'
+//            optional.project 'dynmap'
+//            optional.project 'luckperms'
+//            optional.project 'styled-chat'
+//        }
+//        versionType = project.releaseType.toUpperCase()
+//    }
+//}
+//
+//tasks.register('publishCurseForge', net.darkhax.curseforgegradle.TaskPublishCurseForge) {
+//    if (project.hasProperty('curseforge.apikey')) {
+//        apiToken = project.getProperty('curseforge.apikey')
+//
+//        def mainFile = upload(493679, publishJarTask.get())
+//        mainFile.releaseType = project.releaseType.toLowerCase()
+//        mainFile.changelog = project.changelog
+//        mainFile.changelogType = 'markdown'
+//        mainFile.displayName = "DiscordIntegration-Fabric ${project.mod_version} (MC ${project.minecraft_version})"
+//        mainFile.addModLoader('fabric')
+//        mainFile.addGameVersion("${project.minecraft_version}")
+//
+//        mainFile.addRequirement('fabric-api')
+//        mainFile.addOptional('vanishmod')
+//        mainFile.addOptional('dynmapforge')
+//        mainFile.addOptional('luckperms')
+//        mainFile.addOptional('styled-chat')
+//    }
+//}
+//
+//publishing {
+//    if (project.hasProperty('nexusUser')) {
+//        publications {
+//            mavenJava(MavenPublication) {
+//                groupId = 'de.erdbeerbaerlp'
+//                artifactId = 'dcintegration.fabric'
+//                version = "${project.mod_version}-${project.minecraft_version}"
+//                from components.java
+//            }
+//        }
+//        repositories {
+//            maven {
+//                credentials {
+//                    username = project.nexusUser
+//                    password = project.nexusPass
+//                }
+//                if (project.version.endsWith('-SNAPSHOT')) {
+//                    url = 'https://repo.erdbeerbaerlp.de/repository/maven-snapshots'
+//                } else {
+//                    url = 'https://repo.erdbeerbaerlp.de/repository/maven-releases'
+//                }
+//            }
+//        }
+//    }
+//}
+//
+//tasks.register('release') {
+//    dependsOn(tasks.build, tasks.publishCurseForge, tasks.modrinth)
+//    if (project.hasProperty('nexusUser')) {
+//        dependsOn(tasks.publish)
+//    }
+//}

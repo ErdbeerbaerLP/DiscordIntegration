@@ -1,0 +1,18 @@
+{
+  "required": true,
+  "package": "de.erdbeerbaerlp.dcintegration.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "minVersion": "0.8",
+  "server": [
+    "AdvancementMixin",
+    "NetworkHandlerMixin",
+    "ServerPlayerMixin",
+    "PlayerManagerMixin",
+    "ChatMixin",
+    "CommandManagerMixin",
+    "MixinMinecraftServer"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

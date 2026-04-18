@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "dcintegration-fabric",
+  "version": "${version}",
+  "name": "Discord Integration",
+  "description": "This mod links your server chat with a channel on your discord server.",
+  "authors": ["ErdbeerbaerLP", "P3nguinMinecraft"],
+  "contact": {},
+  "license": "MIT",
+  "environment": "server",
+  "entrypoints": {
+    "server": [
+      "de.erdbeerbaerlp.dcintegration.fabric.DiscordIntegrationFabric"
+    ]
+  },
+  "mixins": [
+    "dcintegration.fabric.mixins.json",
+    "dcintegration.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.19.2",
+    "fabric-api": "*",
+    "minecraft": ">=26.1.2"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "required": false,
+  "package": "de.erdbeerbaerlp.dcintegration.fabric.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "minVersion": "0.8",
+  "plugin": "de.erdbeerbaerlp.dcintegration.fabric.mixin.StyledChatCheckerPlugin",
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
+
