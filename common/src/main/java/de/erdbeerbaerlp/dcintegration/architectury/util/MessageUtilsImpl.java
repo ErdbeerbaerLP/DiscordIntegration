@@ -72,7 +72,7 @@ public class MessageUtilsImpl extends MessageUtils {
                                     if (title.toString().isEmpty())
                                         title = Component.translatable(is.getItem().getDescriptionId());
                                     else
-                                        b.setFooter(is.getItemHolder().getRegisteredName());
+                                        b.setFooter(is.getItem().getDescriptionId());
                                     b.setTitle(title.getString());
                                     final StringBuilder tooltip = new StringBuilder();
                                     //Add Enchantments

@@ -3,24 +3,24 @@ architectury {
 }
 
 dependencies {
-    modImplementation "net.fabricmc:fabric-loader:$rootProject.fabric_loader_version"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:$rootProject.fabric_api_version"
+    api "net.fabricmc:fabric-loader:$rootProject.fabric_loader_version"
+    api "net.fabricmc.fabric-api:fabric-api:$rootProject.fabric_api_version"
 
-    compileOnly(project(path: ':common', configuration: 'namedElements')) { transitive false }
+    compileOnly(project(path: ':common')) { transitive false }
 
-    modImplementation "de.erdbeerbaerlp:dcintegration.common:$rootProject.core_version"
+    api "de.erdbeerbaerlp:dcintegration.common:$rootProject.core_version"
 
-    modImplementation("me.lucko:fabric-permissions-api:$rootProject.fabric_permissions_api")
-    modImplementation "eu.pb4:placeholder-api:$rootProject.placeholder_api"
+    api("me.lucko:fabric-permissions-api:$rootProject.fabric_permissions_api")
+    api "eu.pb4:placeholder-api:$rootProject.placeholder_api"
 
     //Styled Chat
-    modCompileOnly "maven.modrinth:styled-chat:$rootProject.styled_chat"
+    api "maven.modrinth:styled-chat:$rootProject.styled_chat"
 
     //Dynmap-API
-    modCompileOnly('com.github.webbukkit:DynmapCoreAPI:2.5')
+    api('com.github.webbukkit:DynmapCoreAPI:2.5')
 
     //Vanish
-    modCompileOnly "maven.modrinth:vanish:$rootProject.vanish"
+    api "maven.modrinth:vanish:$rootProject.vanish"
 }
 repositories {
     maven {
@@ -37,6 +37,7 @@ repositories {
 
 shadowJar {
     zip64 = true
+
 }
 
 processResources {
