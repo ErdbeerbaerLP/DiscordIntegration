@@ -18,6 +18,7 @@ import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 import net.neoforged.neoforge.server.permission.events.PermissionGatherEvent;
 import net.neoforged.neoforge.server.permission.nodes.PermissionNode;
 import net.neoforged.neoforge.server.permission.nodes.PermissionTypes;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 
@@ -63,7 +64,7 @@ public final class DiscordIntegrationForge {
     public void serverStopped(final ServerStoppedEvent ev) {
         DiscordIntegrationMod.serverStopped(ev.getServer());
     }
-    public static final HashMap<String, PermissionNode<Boolean>> nodes = new HashMap();
+    public static final HashMap<String, PermissionNode<@NotNull Boolean>> nodes = new HashMap<>();
 
     @SubscribeEvent
     public void addPermissions(final PermissionGatherEvent.Nodes ev) {
