@@ -3,6 +3,7 @@ package de.erdbeerbaerlp.dcintegration.architectury.mixin;
 import dcshadow.net.kyori.adventure.text.Component;
 import dcshadow.net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import de.erdbeerbaerlp.dcintegration.architectury.util.MessageUtilsImpl;
+import de.erdbeerbaerlp.dcintegration.architectury.util.PlayerTextureUtils;
 import de.erdbeerbaerlp.dcintegration.architectury.util.SerializeComponentUtils;
 import de.erdbeerbaerlp.dcintegration.common.DiscordIntegration;
 import de.erdbeerbaerlp.dcintegration.common.WorkThread;
@@ -77,12 +78,13 @@ public class PlayerManagerMixin {
             LinkManager.checkGlobalAPI(p.getUUID());
             if (!Localization.instance().playerJoin.isBlank()) {
                 if (Configuration.instance().embedMode.enabled && Configuration.instance().embedMode.playerJoinMessage.asEmbed) {
-                    final String avatarURL = INSTANCE.getSkinURL().replace("%uuid%", p.getUUID().toString()).replace("%uuid_dashless%", p.getUUID().toString().replace("-", "")).replace("%name%", p.getName().getString()).replace("%randomUUID%", UUID.randomUUID().toString());
+                    final String avatarURL = PlayerTextureUtils.getAvatarUrl(p);
                     if (!Configuration.instance().embedMode.playerJoinMessage.customJSON.isBlank()) {
                         final EmbedBuilder b = Configuration.instance().embedMode.playerJoinMessage.toEmbedJson(Configuration.instance().embedMode.playerJoinMessage.customJSON
                                 .replace("%uuid%", p.getUUID().toString())
                                 .replace("%uuid_dashless%", p.getUUID().toString().replace("-", ""))
                                 .replace("%name%", MessageUtilsImpl.formatPlayerName(p))
+                                .replace("%texture_hash%", PlayerTextureUtils.getPlayerTextureHash(p))
                                 .replace("%randomUUID%", UUID.randomUUID().toString())
                                 .replace("%avatarURL%", avatarURL)
                                 .replace("%playerColor%", "" + TextColors.generateFromUUID(p.getUUID()).getRGB())
