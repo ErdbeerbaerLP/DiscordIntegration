@@ -326,7 +326,7 @@ public final class DiscordIntegrationMod {
                         DiscordIntegration.INSTANCE.sendMessage(new DiscordMessage(b.build()), INSTANCE.getChannel(Configuration.instance().advanced.chatOutputChannelID));
                     }
                 } else
-                    DiscordIntegration.INSTANCE.sendMessage(new DiscordMessage(embed, MessageUtilsImpl.formatPlayerName(player) + ": " + text, true), channel);
+                    DiscordIntegration.INSTANCE.sendMessage(MessageUtilsImpl.formatPlayerName(player), player.getUUID().toString(), new DiscordMessage(embed, Localization.instance().discordChatMessage.replace("%player%", MessageUtilsImpl.formatPlayerName(player)).replace("%msg%", text), true), channel);
 
             if (!Configuration.instance().compatibility.disableParsingMentionsIngame) {
                 final String editedJson = GsonComponentSerializer.gson().serialize(MessageUtils.mentionsToNames(comp, channel.getGuild()));
