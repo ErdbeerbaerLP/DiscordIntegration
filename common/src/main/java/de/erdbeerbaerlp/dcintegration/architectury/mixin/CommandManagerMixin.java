@@ -40,6 +40,7 @@ public class CommandManagerMixin {
     public void execute(ParseResults<CommandSourceStack> parseResults, String command, CallbackInfo ci) {
         final CommandSourceStack source = parseResults.getContext().getSource();
         String name = source.getTextName();
+        var lookup = VanillaRegistries.createWorldLookup();
         command = command.replaceFirst(Pattern.quote("/"), "");
         if (DiscordIntegration.INSTANCE != null) {
             if (!Configuration.instance().commandLog.channelID.equals("0")) {
@@ -85,7 +86,7 @@ public class CommandManagerMixin {
                                     source.sendFailure(Component.literal(Localization.instance().commands.consoleOnly));
                                 } catch (CommandSyntaxException e) {
                                     final String txt = GsonComponentSerializer.gson().serialize(mcSubCommand.execute(cmdArgs, null));
-                                    source.sendSuccess(() -> SerializeComponentUtils.fromJson(txt, VanillaRegistries.createLookup()), false);
+                                    source.sendSuccess(() -> SerializeComponentUtils.fromJson(txt, lookup), false);
                                 }
                                 break;
                             case PLAYER_ONLY:
@@ -113,19 +114,19 @@ public class CommandManagerMixin {
                                     final ServerPlayer player = source.getPlayerOrException();
                                     if (!mcSubCommand.needsOP() && ((ServerInterface) DiscordIntegration.INSTANCE.getServerInterface()).playerHasPermissions(player, MinecraftPermission.RUN_DISCORD_COMMAND, MinecraftPermission.USER)) {
                                         final String txt = GsonComponentSerializer.gson().serialize(mcSubCommand.execute(cmdArgs, player.getUUID()));
-                                        source.sendSuccess(() -> SerializeComponentUtils.fromJson(txt, VanillaRegistries.createLookup()), false);
+                                        source.sendSuccess(() -> SerializeComponentUtils.fromJson(txt, lookup), false);
                                     } else if (((ServerInterface) DiscordIntegration.INSTANCE.getServerInterface()).playerHasPermissions(player, MinecraftPermission.RUN_DISCORD_COMMAND_ADMIN)) {
                                         final String txt = GsonComponentSerializer.gson().serialize(mcSubCommand.execute(cmdArgs, player.getUUID()));
-                                        source.sendSuccess(() -> SerializeComponentUtils.fromJson(txt, VanillaRegistries.createLookup()), false);
+                                        source.sendSuccess(() -> SerializeComponentUtils.fromJson(txt, lookup), false);
                                     } else if (source.permissions().hasPermission(new Permission.HasCommandLevel(PermissionLevel.OWNERS))) {
                                         final String txt = GsonComponentSerializer.gson().serialize(mcSubCommand.execute(cmdArgs, player.getUUID()));
-                                        source.sendSuccess(() -> SerializeComponentUtils.fromJson(txt, VanillaRegistries.createLookup()), false);
+                                        source.sendSuccess(() -> SerializeComponentUtils.fromJson(txt, lookup), false);
                                     } else {
                                         source.sendFailure(Component.literal(Localization.instance().commands.noPermission));
                                     }
                                 } catch (CommandSyntaxException e) {
                                     final String txt = GsonComponentSerializer.gson().serialize(mcSubCommand.execute(cmdArgs, null));
-                                    source.sendSuccess(() -> SerializeComponentUtils.fromJson(txt, VanillaRegistries.createLookup()), false);
+                                    source.sendSuccess(() -> SerializeComponentUtils.fromJson(txt, lookup), false);
                                 }
                                 break;
                         }

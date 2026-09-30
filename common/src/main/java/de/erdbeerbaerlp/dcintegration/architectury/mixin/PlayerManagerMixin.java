@@ -48,7 +48,7 @@ public class PlayerManagerMixin {
         if (eventKick != null) {
             final String jsonComp = GsonComponentSerializer.gson().serialize(eventKick).replace("\\\\n", "\n");
             try {
-                final net.minecraft.network.chat.Component comp = SerializeComponentUtils.fromJson(jsonComp, VanillaRegistries.createLookup());
+                final net.minecraft.network.chat.Component comp = SerializeComponentUtils.fromJson(jsonComp, VanillaRegistries.createWorldLookup());
                 cir.setReturnValue(comp);
             } catch (Exception e) {
                 e.printStackTrace();

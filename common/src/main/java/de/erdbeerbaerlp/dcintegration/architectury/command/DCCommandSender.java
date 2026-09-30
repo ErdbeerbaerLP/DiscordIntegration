@@ -94,10 +94,8 @@ public class DCCommandSender implements CommandSource {
                 Vec2.ZERO,
                 DiscordIntegrationMod.server.findRespawnDimension(),
                 LevelBasedPermissionSet.OWNER,
-                this.name.getString(),
                 this.name,
-                DiscordIntegrationMod.server,
-                null
+                DiscordIntegrationMod.server
         );
     }
 
